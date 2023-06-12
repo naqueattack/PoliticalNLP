@@ -48,7 +48,48 @@ def create_other_var(df):
     df_other_var = df_other_var.drop('Title',axis=1)
     return df_other_var
 
-   
+def nouns(x):
+    nouns = []
+    for (word,pos) in x:
+        if pos.startswith("NN"):
+            nouns.append(word)
+        number = len(nouns)
+    return number
+
+def proper_nouns(x):
+    proper_nouns=[]
+    for (word,pos) in x:
+        if pos.startswith("NNP"):
+            proper_nouns.append(word)
+        number = len(proper_nouns)
+    return number
+
+def verbs(x):
+    verbs = []
+    for (word,pos) in x:
+        if pos.startswith("V"):
+            verbs.append(word)
+        number = len(verbs)
+    return number
+
+def adjectives(x):
+    adjectives = []
+    for (word,pos) in x:
+        if pos.startswith("JJ"):
+            adjectives.append(word)
+        number = len(adjectives)
+    return number
+
+def pos_tag(df_token):
+    from nltk import pos_tag
+    df_token['POS'] = df_token['Title'].apply(pos_tag)
+    
+    df_token['Nouns'] = df_token['POS'].apply(nouns)
+    df_token['Proper_Nouns'] = df_token['POS'].apply(proper_nouns)
+    df_token['Verbs'] = df_token['POS'].apply(verbs)
+    df_token['Adjectives'] = df_token['POS'].apply(adjectives)
+    return df_token
+
 def cleaning_and_prep(df):
     ''' adding a dataframe to this will clean it and do data preparation 
     on the text column 'Title' and output a dataframe ready for inputting into LSTM model
