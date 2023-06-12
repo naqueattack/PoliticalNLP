@@ -88,6 +88,8 @@ def pos_tag(df_token):
     df_token['Proper_Nouns'] = df_token['POS'].apply(proper_nouns)
     df_token['Verbs'] = df_token['POS'].apply(verbs)
     df_token['Adjectives'] = df_token['POS'].apply(adjectives)
+    
+    df_token = df_token.drop('POS',axis=1)
     return df_token
 
 def cleaning_and_prep(df):
@@ -142,6 +144,8 @@ def cleaning_and_prep(df):
     all_words = X['Title'].tolist()
     word2vec = Word2Vec(all_words)
     
+    X = pos_tag(X)
+    
     def get_vector(word_list):
         from gensim.models import Word2Vec
         import numpy as np
@@ -171,14 +175,20 @@ def cleaning_and_prep(df):
 
 def stack_vectors(X_train,X_test):
     import numpy as np
+    from sklearn.preprocessing import StandardScaler
+    
     X_train_vec = np.stack(X_train['Title'].values)
     X_test_vec = np.stack(X_test['Title'].values)
     
     X_train_vec = np.reshape(X_train_vec, (X_train_vec.shape[0], 1, 100))
     X_test_vec = np.reshape(X_test_vec, (X_test_vec.shape[0], 1, 100))
     
+    scaler = StandardScaler()
     X_train = X_train.drop('Title',axis=1)
+    X_train = scaler.fit_transform(X_train)
+    
     X_test = X_test.drop('Title',axis=1)
+    X_test = scaler.transform(X_test)
     
     return X_train_vec, X_test_vec, X_train, X_test
     
