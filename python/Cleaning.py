@@ -84,10 +84,10 @@ def pos_tag(df_token):
     from nltk import pos_tag
     df_token['POS'] = df_token['Title'].apply(pos_tag)
     
-    df_token['Nouns'] = df_token['POS'].apply(nouns)
+    #df_token['Nouns'] = df_token['POS'].apply(nouns)
     df_token['Proper_Nouns'] = df_token['POS'].apply(proper_nouns)
-    df_token['Verbs'] = df_token['POS'].apply(verbs)
-    df_token['Adjectives'] = df_token['POS'].apply(adjectives)
+    #df_token['Verbs'] = df_token['POS'].apply(verbs)
+    #df_token['Adjectives'] = df_token['POS'].apply(adjectives)
     
     df_token = df_token.drop('POS',axis=1)
     return df_token
@@ -120,7 +120,7 @@ def cleaning_and_prep(df):
     
     df = pd.concat([df,df_other_var],axis=1)
     
-    df = df[df['Length']>=15]
+    df = df[df['Length']>=5]
     
     #Split into X & y
     X = df.drop(['y'],axis=1)
@@ -143,6 +143,8 @@ def cleaning_and_prep(df):
     #create a word2vec of the frame
     all_words = X['Title'].tolist()
     word2vec = Word2Vec(all_words)
+    
+    X['Word'] = X['Title'].apply(lambda x: len(x))
     
     X = pos_tag(X)
     
