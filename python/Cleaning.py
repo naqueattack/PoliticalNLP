@@ -35,6 +35,11 @@ def count_capitalized_words(text):
     capitalized_words = re.findall(r'\b[A-Z][a-zA-Z]+\b', text)
     return len(capitalized_words)
 
+def count_punctuations(text):
+    import re
+    punctuation = re.findall(r"[!\"#\$%&\'\(\)\*\+,-\./:;<=>\?@\[\\\]\^_`{\|}~]", text)
+    return len(punctuation)
+
 def create_other_var(df):
     #score(upvotes) & number of comments
     df_other_var = df[['Title','Score','Num of Comments']]
@@ -43,8 +48,12 @@ def create_other_var(df):
     #variable with length of characters
     df_other_var['Length'] = df_other_var['Title'].apply(lambda x: len(x))
     
-    #variable with # of capitalized words
+    #variable with # of capitalized words and punctuation
     df_other_var['Capitals'] = df_other_var['Title'].apply(count_capitalized_words)
+    
+    #doesn't improve performance so commented out
+    #df_other_var['Punctuation'] = df_other_var['Title'].apply(count_punctuations)
+    
     df_other_var = df_other_var.drop('Title',axis=1)
     return df_other_var
 
@@ -84,6 +93,7 @@ def pos_tag(df_token):
     from nltk import pos_tag
     df_token['POS'] = df_token['Title'].apply(pos_tag)
     
+    #commented out those that didn't improve model
     #df_token['Nouns'] = df_token['POS'].apply(nouns)
     df_token['Proper_Nouns'] = df_token['POS'].apply(proper_nouns)
     #df_token['Verbs'] = df_token['POS'].apply(verbs)
@@ -91,6 +101,7 @@ def pos_tag(df_token):
     
     df_token = df_token.drop('POS',axis=1)
     return df_token
+
 
 def cleaning_and_prep(df):
     ''' adding a dataframe to this will clean it and do data preparation 
@@ -144,7 +155,8 @@ def cleaning_and_prep(df):
     all_words = X['Title'].tolist()
     word2vec = Word2Vec(all_words)
     
-    X['Word'] = X['Title'].apply(lambda x: len(x))
+    #ineffective so commenting out
+    #X['Word'] = X['Title'].apply(lambda x: len(x))
     
     X = pos_tag(X)
     
