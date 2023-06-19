@@ -8,6 +8,7 @@ def unpunctuate(text):
 
 def remove_stopwords(tokenized_text):
     import nltk
+    nltk.download('stopwords')
 
     from nltk.corpus import stopwords
 
@@ -159,18 +160,27 @@ def cleaning_and_prep(df):
     
     X = pos_tag(X)
     
-    def get_vectors(word_list):
+    def get_vector(word_list):
         from gensim.models import Word2Vec
         import numpy as np
 
-        vectors = []
+        vector = np.zeros(word2vec.vector_size)  # Create an empty vector of appropriate size
+        count = 0  # Initialize a count variable
         for word in word_list:
             if word in word2vec.wv:
-                vectors.append(word2vec.wv[word])
-
-        return np.array(vectors)
+                vector += word2vec.wv[word]  # Add the word vector to the overall vector
+                count += 1  # Increment the count
+        if count != 0:
+            vector /= count  # Divide the vector by the count to get the average
+        return vector
     
-    X['Title'] = X['Title'].apply(get_vectors)
+    X['Title'] = X['Title'].apply(get_vector)
+    
+    # Convert the vector column to a list of lists
+    vector_list = X['Title'].tolist()
+
+    # Convert the list of lists to a NumPy array with float32 data type
+    vector_array = np.array(vector_list, dtype=np.float32)
 
     word_vectors = word2vec.wv.vectors
     
@@ -181,26 +191,12 @@ def stack_vectors(X_train,X_test):
     import numpy as np
     from sklearn.preprocessing import StandardScaler
     
-    X_train_vec = X_train['Title'].to_numpy()
-    X_test_vec = X_test['Title'].to_numpy()
+    X_train_vec = np.stack(X_train['Title'].values)
+    X_test_vec = np.stack(X_test['Title'].values)
     
-    # Pad training sequences
-    train_padded_sequences = np.zeros((len(X_train_vec), 60, len(X_train_vec[0][0])))
-    for i, seq in enumerate(X_train_vec):
-        for j, vector in enumerate(seq):
-            train_padded_sequences[i, j] = vector
-
-    # Pad test sequences
-    max_test_sequence_length = max(len(seq) for seq in X_test_vec)
-    test_padded_sequences = np.zeros((len(X_test_vec), 60, len(X_test_vec[0][0])))
-    for i, seq in enumerate(X_test_vec):
-        for j, vector in enumerate(seq):
-            test_padded_sequences[i, j] = vector
-
-    # Create train and test masks
-    train_mask = (train_padded_sequences.sum(axis=2) != 0).astype(int)
-    test_mask = (test_padded_sequences.sum(axis=2) != 0).astype(int)
-
+    X_train_vec = np.reshape(X_train_vec, (X_train_vec.shape[0], 1, 100))
+    X_test_vec = np.reshape(X_test_vec, (X_test_vec.shape[0], 1, 100))
+    
     scaler = StandardScaler()
     X_train = X_train.drop('Title',axis=1)
     X_train = scaler.fit_transform(X_train)
@@ -208,5 +204,5 @@ def stack_vectors(X_train,X_test):
     X_test = X_test.drop('Title',axis=1)
     X_test = scaler.transform(X_test)
     
-    return train_padded_sequences, test_padded_sequences, X_train, X_test, scaler, train_mask, test_mask
+    return X_train_vec, X_test_vec, X_train, X_test, scaler
     
