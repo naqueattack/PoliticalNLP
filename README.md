@@ -27,7 +27,7 @@ I opted to keep posts with a length of at least 15 characters as this had good r
 
 There was also an imbalance in the data toward ‘liberal’ posts as opposed to conservative ones. I oversampled the minority class to address this.
 
-![plot](images/Length_Histogram.png)
+![Histogram](images/Length_Histogram.PNG)
 
 ## Data Preparation & Data Engineering
 
@@ -50,7 +50,7 @@ Accuracy: 65%
 
 The model struggled with over-predicting the conservative class, doing a better job with conservative posters.
 
-![plot](images/Confusion_Logistic_Model.PNG)
+![confusion matrix](images/Confusion_Logistic_Model.PNG)
 
 ## Final Model (LSTM)
 
@@ -64,15 +64,15 @@ LSTM Units (256 / 128)
 Dense Units( 64)
 Dropout (0.05)
 
-![plot](images/LSTM.png)
+![model flow](images/LSTM.png)
 
 The model performed very well with an accuracy of 85% and an ROC-AUC of 91%. 
 
-![plot](images/Confusion_Sentence_Model.png)
+![confusion matrix](images/Confusion_Sentence_Model.PNG)
 
 There was some overfitting, but not anything out of hand. Around about 20 epochs training and validation diverge, but within reasonable levels.
 
-![plot](images/Epochs_Sentence_Model.png)
+![ROC-Epoch](images/Epochs_Sentence_Model.PNG)
 
 The model had a high accuracy but did tend to fail when text was short and/or vague or when it represented news that could easily have been posted by either group. Where it performed best, text was medium length, punchy and contained keywords that were easy to identify  
 
