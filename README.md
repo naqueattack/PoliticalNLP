@@ -50,7 +50,7 @@ Accuracy: 65%
 
 The model struggled with over-predicting the conservative class, doing a better job with conservative posters.
 
-![plot](images/Confusion_Logistic_Model.png)
+![plot](images/Confusion_Logistic_Model.PNG)
 
 ## Final Model (LSTM)
 
