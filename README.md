@@ -64,7 +64,7 @@ LSTM Units (256 / 128)
 Dense Units( 64)
 Dropout (0.05)
 
-![model flow](images/LSTM.png)
+![model flow](images/LSTM.PNG)
 
 The model performed very well with an accuracy of 85% and an ROC-AUC of 91%. 
 
