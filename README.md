@@ -12,6 +12,7 @@ Used an NLP (Natural Language Processing) Model to predict political affiliation
 
 ## Data
 For this exploration I used a datasource of 13k Reddit titles from Kaggle. In addition, I pulled an additional 10k posts from the Reddit API to supplement my model.
+https://www.kaggle.com/datasets/neelgajare/liberals-vs-conservatives-on-reddit-13000-posts
 
 The data contained:
 1. Post Title
